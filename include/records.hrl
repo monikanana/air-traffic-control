@@ -1,10 +1,16 @@
--record(aircraft_in_the_air, {
+% aircraft in the air
+-record(air, {
+    mode=land,
     name,
-    fuel,
-    time_to_land
+    time_to_land, % planowany czas do lądowania
+    time_on_fuel,
+    delay
 }).
 
--record(aircraft_on_the_ground, {
+% aircraft on the ground
+-record(ground, {
+    mode=take_off,
     name,
-    time_to_take_off
+    time_to_take_off,
+    delay
 }).
