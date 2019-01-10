@@ -23,9 +23,6 @@ loop(Queue) ->
     end.
 
 
-
-
-
 -spec compare_airs(#air{}, #air{}) -> boolean().
 compare_airs(A, B) ->
     case A#air.time_to_land == B#air.time_to_land of
