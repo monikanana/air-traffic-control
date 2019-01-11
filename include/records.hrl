@@ -14,3 +14,12 @@
     time_to_take_off,
     delay
 }).
+
+% aircraft in general
+-record(plane, {
+    mode,
+    name,
+    time,
+    delay
+}).
+

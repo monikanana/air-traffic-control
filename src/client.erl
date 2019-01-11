@@ -2,15 +2,15 @@
 
 -include("../include/records.hrl").
 
--export([   request_landing/5,
+-export([   request_landing/4,
             request_taking_off/4,
             print_queue/1]).
 
 %% Client (Aircrafts)
 
-request_landing(Pid, Name, Land, Fuel, Delay) ->
+request_landing(Pid, Name, Time, Delay) ->
     Pid ! {self(), {
-        #air{name=Name, time_to_land=Land, time_on_fuel=Fuel, delay=Delay}
+        #plane{mode=land, name=Name, time=Time, delay=Delay}
     }},
     receive
         {_, Msg} -> Msg
@@ -18,7 +18,7 @@ request_landing(Pid, Name, Land, Fuel, Delay) ->
 
 request_taking_off(Pid, Name, Time, Delay) ->
     Pid ! {self(), {
-        #ground{name=Name, time_to_take_off=Time, delay=Delay}
+        #plane{mode=take_off, name=Name, time=Time, delay=Delay}
     }},
     receive
         {_, Msg} -> Msg

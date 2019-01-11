@@ -17,11 +17,26 @@ loop(Queue) ->
             From ! {self(), roger_that},
             loop(lists:sort(fun compare_grounds/2, Queue ++ [A]));
 
+        {From, {A = #plane{}}} ->
+            From ! {self(), roger_that},
+            loop(lists:sort(fun compare/2, Queue ++ [A]));
+
         {From, release} ->
             From ! {self(), Queue},
             loop(Queue)
     end.
 
+
+%% private functions
+
+-spec compare(#plane{}, #plane{}) -> boolean().
+compare(A, B) ->
+    case A#plane.time == B#plane.time of
+        true ->
+            A#plane.delay > B#plane.delay;
+        _ -> 
+            A#plane.time < B#plane.time
+    end.
 
 -spec compare_airs(#air{}, #air{}) -> boolean().
 compare_airs(A, B) ->
