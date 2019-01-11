@@ -2,9 +2,12 @@
 
 -include("../include/records.hrl").
 
--export([loop/1]).
+-export([loop/1, start_server/0]).
 
 %% Server (ATC)
+start_server() ->
+    spawn(server, loop, [[]]).
+
 
 loop(Queue) ->
     receive
@@ -25,9 +28,6 @@ loop(Queue) ->
             From ! {self(), Queue},
             loop(Queue)
     end.
-
-
-%% private functions
 
 -spec compare(#plane{}, #plane{}) -> boolean().
 compare(A, B) ->
