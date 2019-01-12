@@ -17,12 +17,12 @@ run() ->
    Action = io:get_line(""),
    if
       Action =:= "1\n" ->
-         io:format("wybrales 1\n"),
+         io:format("Chosen: 1\n"),
          run();
 
       Action =:= "2\n" ->
-         Mode = land, Name = "Airbus A320", Time = 180, Delay = 0, %TODO: dane podawane z klawiatury
-
+         {Mode, Name, Time, Delay} = input_aircraft(),
+      
          PID_ATC = spawn(server, atc, [[]]),             % nasluchuje na dodawanie samolotow do kolejki
          PID_ATC_OBSERVER = spawn(fun atc_observer/0),   % nasluchuje na kolejke do wyswietlenia
          PID_ATC ! {PID_ATC_OBSERVER, {
@@ -47,8 +47,23 @@ run() ->
 atc_observer() ->
    receive
       {_, Queue} ->     % TODO: something is wrong with printing Queue
-         io:format(Queue),
+         lists:foreach(fun(A) -> io:format("~p~n", [A]) end, [Queue]),
+         %io:format("~p~n", [Queue]),
          atc_observer()
+   end.
+
+input_aircraft() ->
+   Mode = input_mode(),
+   io:format("Name: "), Name = binary_to_list(iolist_to_binary(re:replace(io:get_line(""), "\n", ""))), 
+   io:format("Time: "), Time = erlang:list_to_integer(string:left(io:get_line(""),2)), 
+   io:format("Delay: "), Delay = erlang:list_to_integer(string:left(io:get_line(""),2)), 
+   {Mode, Name, Time, Delay}.
+
+input_mode() ->
+   io:format("[1] Landing, [2] Taking off: "), Option = io:get_line(""),
+   if Option =:= "1\n" -> land;
+      Option =:= "2\n" -> take_off;
+      true -> io:format("Incorrect option.\n"), input_mode()
    end.
 
 print_options() ->
