@@ -1,5 +1,7 @@
 -module(mock).
--export([random_aircraft/0, generate_aircrafts/1, mock/1]).
+
+-export([random_aircraft/0, generate_aircrafts/1, mock/2]).
+
 -import(client,[request/5]).
 -import(server,[start/0]).
 
@@ -21,11 +23,11 @@ generate_aircrafts(N) ->
         lists:seq(1,N)
     ).
 
-mock(N) ->
-    Server = server:start(),
+mock(N, Server) ->
+    %Server = server:start(),
     lists:foreach(
         fun({Mode,Name,Time,Delay}) ->
             client:request(Server,Mode,Name,Time,Delay) end,
         generate_aircrafts(N)
-    ),
-    Server.
+    ).
+    %Server.

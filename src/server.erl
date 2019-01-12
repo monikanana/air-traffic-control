@@ -2,26 +2,24 @@
 
 -include("../include/records.hrl").
 
--export([loop/1, start/0, print_queue/1]).
+-export([atc/1, get_queue/1]).
 
 %% Server (ATC)
-start() ->
-    spawn(server, loop, [[]]).
 
-
-loop(Queue) ->
+atc(Queue) ->
     receive
-
+        % dodawanie samolotów do kolejki
         {From, {A = #plane{}}} ->
             From ! {self(), roger_that},
-            loop(lists:sort(fun compare/2, Queue ++ [A]));
+            atc(lists:sort(fun compare/2, Queue ++ [A]));
 
+        % uruchomienie symulacji - uwolnienie kolejki
         {From, release} ->
             From ! {self(), Queue},
-            loop(Queue)
+            atc(Queue)
     end.
 
-print_queue(Server) -> 
+get_queue(Server) -> 
     Server ! {self(), release},
     receive
         {_, Msg} -> Msg
