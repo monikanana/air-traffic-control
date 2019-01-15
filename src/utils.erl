@@ -1,5 +1,5 @@
 -module(utils).
--export([input_aircraft_values/0, input_mode/0, print_options/0]).
+-export([input_aircraft_values/0, input_mode/0, print_options/0, draw_aircraft/0]).
 
 input_aircraft_values() ->
    {
@@ -23,3 +23,19 @@ print_options() ->
    io:format("Press 8 to see menu.\n"),
    io:format("Press 9 to exit.\n"),
    io:format("------------- MENU ---------------------------------\n").
+
+
+draw_aircraft() ->
+   io:format("                             |\n"),
+   io:format("                       --====|====--\n"),
+   io:format("                             |  \n"),
+   io:format("\n"),
+   io:format("                         .-'''''-. \n"),
+   io:format("                       .'_________'. \n"),
+   io:format("                      /_/_|__|__|_\\_\\ \n"),
+   io:format("                     ;'-._       _.-';\n"),
+   io:format(",--------------------|    `-. .-'    |--------------------,\n"),
+   io:format(" ``""--..__    ___     ;       '       ;   ___    __..--''`\n"),
+   io:format("           `'-// \\\\.._\\             /_..// \\\\-'`\n"),
+   io:format("              \\\\_//    '._       _.'    \\\\_//\n"),
+   io:format("               `'`        ``---``        `'`\n").

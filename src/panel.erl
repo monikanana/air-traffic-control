@@ -6,7 +6,7 @@
 
 -import(client,[request/5]).
 -import(server,[start/0]).
--import(utils,[input_aircraft_values/0, input_mode/0, print_options/0]).
+-import(utils,[input_aircraft_values/0, input_mode/0, print_options/0, draw_aircraft/0]).
 
 
 main() ->
@@ -23,16 +23,15 @@ run() ->
          PID_ATC = spawn(server, atc, [[]]),             % nasluchuje na dodawanie samolotow do kolejki
          %PID_ATC_OBSERVER = spawn(panel, atc_observer, [PID_ATC]),   % nasluchuje na kolejke do wyswietlenia
          
-         PID_ATC ! {self(), #plane{name="Name", mode=land, time=10, delay=3}},
-         PID_ATC ! {self(), #plane{name="Name", mode=land, time=10, delay=2}},
-         PID_ATC ! {self(), #plane{name="Name", mode=land, time=10, delay=6}},
-         PID_ATC ! {self(), #plane{name="Name", mode=land, time=14, delay=3}},
-         PID_ATC ! {self(), #plane{name="Name", mode=land, time=14, delay=1}},
+         PID_ATC ! {self(), #plane{name="Name", mode=land, time=3, delay=3}},
+         PID_ATC ! {self(), #plane{name="Name", mode=land, time=0, delay=2}},
+         %PID_ATC ! {self(), #plane{name="Name", mode=land, time=10, delay=6}},
+         %PID_ATC ! {self(), #plane{name="Name", mode=land, time=14, delay=3}},
+         %PID_ATC ! {self(), #plane{name="Name", mode=land, time=14, delay=1}},
 
          PID_ATC ! {self(), release},
          receive
             {_, Queue} ->
-               %lists:foreach(fun(A) -> io:format("~p~n", [A]) end, Queue)
                simulate_queue(Queue)
          end,
          run();
@@ -46,6 +45,7 @@ run() ->
          run();
 
       Action =:= "9\n" ->
+         draw_aircraft(),
          exit();
  
       true ->
@@ -53,15 +53,33 @@ run() ->
          run()
    end.
 
-simulate_queue(Queue) ->
-   lists:foreach(
-      fun(P) ->
-         io:format("~p~n", [P])
+simulate_queue(Queue) -> 
+
+   % printuj całą listę razem z zerami
+   lists:foreach(fun(P) -> io:format("~p~n", [P]) end, Queue), 
+
+   % jesli ktorys samolot ma time=-1 to usun go z listy
+   Queue_filtered = lists:filter(fun(#plane{time=Time}) -> Time /= -0 end, Queue),
+
+   % dla każdego samolotu decrementuj time
+   Queue_decremented = lists:foldl(
+      fun(P = #plane{time=Time}, NewQueue) -> 
+         NewQueue ++ [P#plane{time = Time - 1}]
       end,
-      Queue
-   ).
+      [],
+      Queue_filtered
+   ),
 
-
+   if 
+      Queue_decremented /= [] ->
+         io:format("~n----------------------------~n"), 
+         timer:sleep(1000),
+         simulate_queue(Queue_decremented);
+      true -> 
+         io:format("There is no planes in the queue.~n"), 
+         run()
+   end
+.
 
 
 
