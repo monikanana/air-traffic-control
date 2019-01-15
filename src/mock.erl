@@ -24,10 +24,8 @@ generate_aircrafts(N) ->
     ).
 
 mock(N, Server) ->
-    %Server = server:start(),
-    lists:foreach(
+    lists:map(
         fun({Mode,Name,Time,Delay}) ->
             client:request(Server,Mode,Name,Time,Delay) end,
         generate_aircrafts(N)
     ).
-    %Server.

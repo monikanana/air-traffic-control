@@ -9,8 +9,7 @@
 atc(Queue) ->
     receive
         % dodawanie samolotów do kolejki
-        {From, {A = #plane{}}} ->
-            From ! {self(), roger_that},
+        {_, A = #plane{}} ->
             atc(lists:sort(fun compare/2, Queue ++ [A]));
 
         % uruchomienie symulacji - uwolnienie kolejki
@@ -22,7 +21,7 @@ atc(Queue) ->
 get_queue(Server) -> 
     Server ! {self(), release},
     receive
-        {_, Msg} -> Msg
+        {_, Msg} -> io:format("~p~n", [Msg])
     end.
 
 

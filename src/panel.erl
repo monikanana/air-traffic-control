@@ -6,6 +6,7 @@
 
 -import(client,[request/5]).
 -import(server,[start/0]).
+-import(utils,[input_aircraft_values/0, input_mode/0, print_options/0]).
 
 
 main() ->
@@ -16,20 +17,28 @@ main() ->
 run() ->
    Action = io:get_line(""),
    if
+
       Action =:= "1\n" ->
-         io:format("Chosen: 1\n"),
+      
+         PID_ATC = spawn(server, atc, [[]]),             % nasluchuje na dodawanie samolotow do kolejki
+         %PID_ATC_OBSERVER = spawn(panel, atc_observer, [PID_ATC]),   % nasluchuje na kolejke do wyswietlenia
+         
+         PID_ATC ! {self(), #plane{name="Name", mode=land, time=10, delay=3}},
+         PID_ATC ! {self(), #plane{name="Name", mode=land, time=10, delay=2}},
+         PID_ATC ! {self(), #plane{name="Name", mode=land, time=10, delay=6}},
+         PID_ATC ! {self(), #plane{name="Name", mode=land, time=14, delay=3}},
+         PID_ATC ! {self(), #plane{name="Name", mode=land, time=14, delay=1}},
+
+         PID_ATC ! {self(), release},
+         receive
+            {_, Queue} ->
+               %lists:foreach(fun(A) -> io:format("~p~n", [A]) end, Queue)
+               simulate_queue(Queue)
+         end,
          run();
 
       Action =:= "2\n" ->
-         {Mode, Name, Time, Delay} = input_aircraft(),
-      
-         PID_ATC = spawn(server, atc, [[]]),             % nasluchuje na dodawanie samolotow do kolejki
-         PID_ATC_OBSERVER = spawn(fun atc_observer/0),   % nasluchuje na kolejke do wyswietlenia
-         PID_ATC ! {PID_ATC_OBSERVER, {
-            #plane{mode=Mode, name=Name, time=Time, delay=Delay}
-         }},
-
-         PID_ATC ! {PID_ATC_OBSERVER, release},
+         io:format("Nothing happens in this mode now.\n"),
          run();
          
       Action =:= "8\n" ->
@@ -38,41 +47,29 @@ run() ->
 
       Action =:= "9\n" ->
          exit();
-
+ 
       true ->
          io:fwrite("Wrong action, try again. Use '8' to check all available option\n"),
          run()
    end.
 
-atc_observer() ->
-   receive
-      {_, Queue} ->     % TODO: something is wrong with printing Queue
-         lists:foreach(fun(A) -> io:format("~p~n", [A]) end, [Queue]),
-         %io:format("~p~n", [Queue]),
-         atc_observer()
-   end.
+simulate_queue(Queue) ->
+   lists:foreach(
+      fun(P) ->
+         io:format("~p~n", [P])
+      end,
+      Queue
+   ).
 
-input_aircraft() ->
-   Mode = input_mode(),
-   io:format("Name: "), Name = binary_to_list(iolist_to_binary(re:replace(io:get_line(""), "\n", ""))), 
-   io:format("Time: "), Time = erlang:list_to_integer(string:left(io:get_line(""),2)), 
-   io:format("Delay: "), Delay = erlang:list_to_integer(string:left(io:get_line(""),2)), 
-   {Mode, Name, Time, Delay}.
 
-input_mode() ->
-   io:format("[1] Landing, [2] Taking off: "), Option = io:get_line(""),
-   if Option =:= "1\n" -> land;
-      Option =:= "2\n" -> take_off;
-      true -> io:format("Incorrect option.\n"), input_mode()
-   end.
 
-print_options() ->
-   io:format("------------- MENU ---------------------------------\n"),
-   io:format("Press 1 to simulate traffic with mock data.\n"),
-   io:format("Press 2 to simulate traffic with your own airplanes.\n"),
-   io:format("Press 8 to see menu.\n"),
-   io:format("Press 9 to exit.\n"),
-   io:format("------------- MENU ---------------------------------\n").
+
+
+input_aircrafts(PID_ATC, PID_ATC_OBSERVER) ->
+    
+   {Mode, Name, Time, Delay} = input_aircraft_values(),
+   PID_ATC ! {PID_ATC_OBSERVER, #plane{mode=Mode, name=Name, time=Time, delay=Delay}}.
+
 
 exit() ->
    io:format("Program is going be down.\n"),
