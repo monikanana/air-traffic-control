@@ -4,7 +4,7 @@
 
 -export([main/0, simulate_queue/1]).
 
--import(client,[request/5]).
+%-import(client,[request/5]).
 -import(server,[start/0]).
 -import(mock,[mock/2]).
 -import(utils,[print_options/0, draw_aircraft/0, input_number/0]).
@@ -22,17 +22,13 @@ run() ->
       Action =:= "1\n" ->
       
          PID_ATC = spawn(server, atc, [[]]),           
-         mock(PID_ATC, input_number()),   % mam gotową kolejkę samolotów
+         mock(PID_ATC, input_number()),
 
          PID_SIMULATION = spawn(fun simulation/0),
          PID_ATC ! {PID_SIMULATION, release},
          PID_ATC_OBSERVER = spawn(fun atc_observer/0),
          PID_ATC_OBSERVER ! {start, PID_SIMULATION},
 
-         run();
-
-      Action =:= "2\n" ->
-         io:format("Nothing happens in this mode now.\n"),
          run();
          
       Action =:= "8\n" ->
@@ -44,7 +40,7 @@ run() ->
          exit();
  
       true ->
-         io:fwrite("Wrong action, try again. Use '8' to check all available option\n"),
+         %io:format("Wrong action, use [8] to print avaible options.\n"),
          run()
    end.
 
@@ -73,13 +69,17 @@ new_run() ->
     end.
 
 simulation() ->
+   io:format(os:cmd(clear)),
+   timer:sleep(1000),
    receive
       {_, Queue} ->
-         io:format("\n----------------------------\nSIMULATION:\n\n"),
          simulate_queue(Queue)
    end.
 
 simulate_queue(Queue) -> 
+
+   io:fwrite("You can press [x] to terminate simulation.\n"),
+   timer:sleep(500),
 
    lists:foreach(
       fun(P = #plane{time=Time, name=Name}) ->
@@ -87,7 +87,7 @@ simulate_queue(Queue) ->
             0 ->
                io:format("~s is leaving the runaway.\n", [Name]);
 
-            _ -> 
+            _ ->
                io:format("~p~n", [P])
          end
       end,
@@ -106,14 +106,19 @@ simulate_queue(Queue) ->
 
    if 
       Queue_decremented /= [] ->
-         io:format("\n----------------------------\n"), 
-         timer:sleep(1000),
+         %io:format("\n----------------------------\n"), 
+         timer:sleep(1500),
+         io:format(os:cmd(clear)),
          simulate_queue(Queue_decremented);
+
       true -> 
-         io:format(">>> There is no planes in the queue. <<<\n"), 
+         io:format(os:cmd(clear)),
+         io:format(">>> There is no planes in the queue. <<<\n\n"),
+
+         print_options(),
+
          run()
    end.
-
 
 
 exit() ->

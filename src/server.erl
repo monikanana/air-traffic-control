@@ -2,7 +2,7 @@
 
 -include("../include/records.hrl").
 
--export([atc/1, get_queue/1]).
+-export([atc/1]).
 
 %% Server (ATC)
 
@@ -17,13 +17,6 @@ atc(Queue) ->
             From ! {self(), Queue},
             atc(Queue)
     end.
-
-get_queue(Server) -> 
-    Server ! {self(), release},
-    receive
-        {_, Msg} -> io:format("~p~n", [Msg])
-    end.
-
 
 -spec compare(#plane{}, #plane{}) -> boolean().
 compare(A, B) ->
