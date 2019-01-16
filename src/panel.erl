@@ -53,7 +53,7 @@ atc_observer() ->
                      PID_NEW_MAIN = spawn(fun new_run/0),
                      PID_NEW_MAIN ! start,
                      exit(PID_SIMULATION, kill),
-                     io:fwrite("Terrorism attack happened. Airport cannot handle aircrafts requests.\n");
+                     io:fwrite("Terrorist attack happened. Airport cannot handle aircrafts requests.\n");
 
                 true ->
                     atc_observer()
@@ -107,7 +107,7 @@ simulate_queue(Queue) ->
    if 
       Queue_decremented /= [] ->
          %io:format("\n----------------------------\n"), 
-         timer:sleep(1500),
+         timer:sleep(2500),
          io:format(os:cmd(clear)),
          simulate_queue(Queue_decremented);
 

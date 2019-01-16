@@ -7,6 +7,10 @@
 -import(client,[request/5]).
 -import(server,[start/0]).
 
+%% Macros 
+-define(filepath, "./mock/aircrafts").
+
+
 random_aircraft() ->
     Aircrafts = ["Airbus A320", "Airbus A300", "Airbus A310", "Airbus A330", "Airbus A340", "Airbus A350", "Airbus A380",
                  "Boeing 747", "Boeing 747-400", "Boeing 747-8", "Boeing 767", "Boeing 777", "Boeing 787"],
@@ -14,9 +18,10 @@ random_aircraft() ->
     {
         lists:nth(rand:uniform(length(Mode)), Mode),
         lists:nth(rand:uniform(length(Aircrafts)), Aircrafts),
-        floor(rand:uniform()*10),
+        floor(rand:uniform()*10)+1,
         floor(rand:uniform()*5)
     }.
+
 
 generate_aircrafts(N) ->
     lists:foldl(
