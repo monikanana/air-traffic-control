@@ -1,20 +1,18 @@
 -module(utils).
--export([input_aircraft_values/0, input_mode/0, print_options/0, draw_aircraft/0]).
+-export([print_options/0, draw_aircraft/0, input_number/0]).
 
-input_aircraft_values() ->
-   {
-      input_mode(),
-      binary_to_list(iolist_to_binary(re:replace(io:get_line("Name: "), "\n", ""))), 
-      erlang:list_to_integer(binary_to_list(iolist_to_binary(re:replace(io:get_line("Time: "), "\n", "")))), 
-      erlang:list_to_integer(binary_to_list(iolist_to_binary(re:replace(io:get_line("Delay: "), "\n", ""))))
-   }.
 
-input_mode() ->
-   io:format("[1] Landing [2] Taking off: "), Option = io:get_line(""),
-   if Option =:= "1\n" -> land;
-      Option =:= "2\n" -> take_off;
-      true -> io:format("Incorrect option.\n"), input_mode()
-   end.
+input_number() ->
+   Answer = io:get_line("How many aircrafts? "),
+   {X, _} = string:to_integer(Answer),
+   case X of
+      error -> 
+         io:format("It should be a number.\n"),
+         input_number();
+      _ -> 
+         X
+      end.
+
 
 print_options() ->
    io:format("------------- MENU --------------------------\n"),
@@ -39,3 +37,23 @@ draw_aircraft() ->
    io:format("           `'-// \\\\.._\\             /_..// \\\\-'`\n"),
    io:format("              \\\\_//    '._       _.'    \\\\_//\n"),
    io:format("               `'`        ``---``        `'`\n").
+
+
+
+% unused functions below
+
+input_aircraft_values() ->
+   {
+      input_mode(),
+      binary_to_list(iolist_to_binary(re:replace(io:get_line("Name: "), "\n", ""))), 
+      erlang:list_to_integer(binary_to_list(iolist_to_binary(re:replace(io:get_line("Time: "), "\n", "")))), 
+      erlang:list_to_integer(binary_to_list(iolist_to_binary(re:replace(io:get_line("Delay: "), "\n", ""))))
+   }.
+
+
+input_mode() ->
+   io:format("[1] Landing [2] Taking off: "), Option = io:get_line(""),
+   if Option =:= "1\n" -> land;
+      Option =:= "2\n" -> take_off;
+      true -> io:format("Incorrect option.\n"), input_mode()
+   end.
