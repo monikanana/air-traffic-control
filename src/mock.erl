@@ -1,5 +1,7 @@
 -module(mock).
 
+-include("../include/records.hrl").
+
 -export([random_aircraft/0, generate_aircrafts/1, mock/2]).
 
 -import(client,[request/5]).
@@ -12,8 +14,8 @@ random_aircraft() ->
     {
         lists:nth(rand:uniform(length(Mode)), Mode),
         lists:nth(rand:uniform(length(Aircrafts)), Aircrafts),
-        floor(rand:uniform()*100)+30,
-        floor(rand:uniform()*10)
+        floor(rand:uniform()*10),
+        floor(rand:uniform()*5)
     }.
 
 generate_aircrafts(N) ->
@@ -23,9 +25,13 @@ generate_aircrafts(N) ->
         lists:seq(1,N)
     ).
 
-mock(N, Server) ->
+mock(Server, N) ->
     lists:map(
         fun({Mode,Name,Time,Delay}) ->
-            client:request(Server,Mode,Name,Time,Delay) end,
+            Server ! {
+                self(),
+                #plane{mode=Mode, name=Name, time=Time, delay=Delay}
+            }    
+        end,
         generate_aircrafts(N)
     ).

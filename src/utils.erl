@@ -17,12 +17,12 @@ input_mode() ->
    end.
 
 print_options() ->
-   io:format("------------- MENU ---------------------------------\n"),
-   io:format("Press 1 to simulate traffic with mock data.\n"),
-   io:format("Press 2 to simulate traffic with your own airplanes.\n"),
-   io:format("Press 8 to see menu.\n"),
-   io:format("Press 9 to exit.\n"),
-   io:format("------------- MENU ---------------------------------\n").
+   io:format("------------- MENU --------------------------\n"),
+   io:format("[1] simulate traffic with mock data.\n"),
+   io:format("[2] simulate traffic with your own airplanes.\n"),
+   io:format("[8] see menu.\n"),
+   io:format("[9] exit.\n"),
+   io:format("------------- MENU --------------------------\n").
 
 
 draw_aircraft() ->
