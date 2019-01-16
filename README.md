@@ -1,6 +1,7 @@
 # air-traffic-control
 Simulation of ATC made with concurrency in Erlang
 
+---
 
 Instructions:
 1. Open console in the directory with Makefile.
