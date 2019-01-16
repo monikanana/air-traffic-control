@@ -17,6 +17,7 @@ input_number() ->
 print_options() ->
    io:format("------------- MENU --------------------------\n"),
    io:format("[1] simulate traffic with mock data.\n"),
+   io:format("[2] add new aircraft to our database.\n"),
    io:format("[8] see menu.\n"),
    io:format("[9] exit.\n"),
    io:format("------------- MENU --------------------------\n").

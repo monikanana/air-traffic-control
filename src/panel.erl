@@ -31,6 +31,13 @@ run() ->
 
          run();
          
+      Action =:= "2\n" ->
+
+         Plane = io:get_line("Name of aircraft: "),
+         file:write_file("./src/mock/aircrafts.txt", Plane, [append]),
+         
+         run();
+      
       Action =:= "8\n" ->
          print_options(),
          run();

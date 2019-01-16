@@ -1,0 +1,13 @@
+Airbus A320
+Airbus A300
+Airbus A310
+Airbus A330
+Airbus A340
+Airbus A350
+Airbus A380
+Boeing 747
+Boeing 747-400
+Boeing 747-8
+Boeing 767
+Boeing 777
+Boeing 787
