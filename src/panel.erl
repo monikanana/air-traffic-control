@@ -4,7 +4,6 @@
 
 -export([main/0, simulate_queue/1]).
 
-%-import(client,[request/5]).
 -import(server,[start/0, compare/2]).
 -import(mock,[mock/2]).
 -import(utils,[print_options/0, draw_aircraft/0, input_number/0]).
