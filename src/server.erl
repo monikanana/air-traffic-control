@@ -2,7 +2,7 @@
 
 -include("../include/records.hrl").
 
--export([atc/1]).
+-export([atc/1, compare/2]).
 
 %% Server (ATC)
 

@@ -5,7 +5,7 @@
 -export([main/0, simulate_queue/1]).
 
 %-import(client,[request/5]).
--import(server,[start/0]).
+-import(server,[start/0, compare/2]).
 -import(mock,[mock/2]).
 -import(utils,[print_options/0, draw_aircraft/0, input_number/0]).
 
@@ -88,6 +88,27 @@ simulate_queue(Queue) ->
    io:fwrite("You can press [x] to terminate simulation.\n"),
    timer:sleep(500),
 
+   #plane{time=T} = lists:nth(1, Queue),
+   case T of
+      0 ->
+         Queue_delayed = [lists:nth(1, Queue)] ++ lists:foldl(
+            fun(P = #plane{time=Time, delay=Delay}, NewQueue) ->
+
+               case Time of
+                  0 -> NewQueue ++ [P#plane{time = Time + 1, delay = Delay + 1}];
+                  _ -> NewQueue ++ [P]
+               end
+            end,
+            [], 
+            lists:nthtail(1, Queue)
+         );
+      _ -> 
+         Queue_delayed = Queue
+   end,
+
+   Queue_delayed_sorted = lists:sort(fun server:compare/2, Queue_delayed),
+
+
    lists:foreach(
       fun(P = #plane{time=Time, name=Name}) ->
          case Time of
@@ -98,10 +119,10 @@ simulate_queue(Queue) ->
                io:format("~p~n", [P])
          end
       end,
-      Queue
+      Queue_delayed_sorted
    ), 
 
-   Queue_filtered = lists:filter(fun(#plane{time=Time}) -> Time /= 0 end, Queue),
+   Queue_filtered = lists:filter(fun(#plane{time=Time}) -> Time /= 0 end, Queue_delayed_sorted),
 
    Queue_decremented = lists:foldl(
       fun(P = #plane{time=Time}, NewQueue) -> 
