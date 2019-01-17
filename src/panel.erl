@@ -109,12 +109,12 @@ simulate_queue(Queue) ->
 
    Queue_delayed_sorted = lists:sort(fun server:compare/2, Queue_delayed),
 
-
    lists:foreach(
       fun(P = #plane{time=Time, name=Name}) ->
          case Time of
             0 ->
-               io:format("~s is leaving the runaway.\n", [Name]);
+               io:format("~s is leaving the runaway.\n", [Name]),
+               timer:sleep(1000);
 
             _ ->
                io:format("~p~n", [P])
@@ -134,8 +134,7 @@ simulate_queue(Queue) ->
    ),
 
    if 
-      Queue_decremented /= [] ->
-         %io:format("\n----------------------------\n"), 
+      Queue_decremented /= [] -> 
          timer:sleep(2500),
          io:format(os:cmd(clear)),
          simulate_queue(Queue_decremented);
