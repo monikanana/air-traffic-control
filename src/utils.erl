@@ -5,12 +5,19 @@
 input_number() ->
    Answer = io:get_line("How many aircrafts? "),
    {X, _} = string:to_integer(Answer),
+
    case X of
       error -> 
          io:format("It should be a number.\n"),
          input_number();
       _ -> 
-         X
+         if 
+            X < 1 -> 
+               io:format("Number should be positive.\n"),
+               input_number();
+            true ->
+               X
+         end
       end.
 
 
