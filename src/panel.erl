@@ -35,6 +35,8 @@ run() ->
 
          Plane = io:get_line("Name of aircraft: "),
          file:write_file("./src/mock/aircrafts.txt", Plane, [append]),
+         io:format("Aircraft created.\n"),
+         io:format("Select option from menu: "),
          
          run();
       
@@ -150,5 +152,5 @@ simulate_queue(Queue) ->
 
 
 exit() ->
-   io:format("Program is going be down.\n"),
+   io:format("Program is shutting down.\n"),
    init:stop(0).
