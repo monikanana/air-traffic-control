@@ -1,0 +1,78 @@
+====== Kontrola ruchu powietrznego ======
+  * imiona i nazwiska: **[[mobaran@student.agh.edu.pl|Monika Baran]], [[Krzysztof Kosecki]]**
+  * kierunek: Informatyka
+  * rok: III, 2018/2019
+  * wydział: EAIiIB
+  * grupa dziekanatowa: I
+
+
+===== Data oddania programu ======
+**17.01.2019**
+===== Cel programu: ===== 
+Symulacja kolejkowania samolotów przylatujących i startujących z danego pasa startowego na lotnisku.
+
+=== Opis === 
+Symulacja odbywa się poprzez wypisywanie co sekundę kolejki samolotów, dla których zaplanowano użycie pasa startowego. Samoloty są opisywane przez:
+  * tryb użycia pasa (lądowanie/startowanie)
+  * nazwę
+  * czas w minutach do planowanego zajęcia pasa
+  * opóźnienie samolotu w stosunku do planowanego czasu wykorzystania pasa.
+
+Samolotom zgłaszających się przydzielane jest miejsce w kolejce do pasa w kolejności od najmniejszej wartości czasu do planowanego zajęcia pasa. W przypadku samolotów o jednakowej wartości wspomnianego czasu miejsce jest przydzielane rosnąco według opóźnienia.
+
+===== Struktura zadaniowa programu =====
+
+=== Diagram kooperacji poszczególnych elementów programu ===
+{{:dydaktyka:pwir:2018:projekty:diagram_kooperacji_procesow.jpg?700|}}
+
+
+=== Szczegółowy opis implementacji ===
+
+== Opis procesów: ==
+  * **panel:run** - główna pętla programu, obsługuje czynności użytkownika
+  * **panel:main** - pętla inicjująca główną pętlę programu
+  * **panel:new_main** - funkcja uruchamiająca proces inicjujący po zatrzymaniu symulacji przez użytkownika
+  * **panel:atc_observer** - proces uruchamiany jako monitor procesu server:atc, nasłuchuje na rozpoczęcie i zakończenie symulacji, egzekwuje zakończenie sumulacji na procesie panel:simulation 
+  * **panel:simulation** - pobiera od server:atc kolejkę samolotów i wizualizuje ją użytkownikowi 
+  * **server:atc** - proces sortujący i zwracający kolejkę
+
+== Opis modułów: ==
+  * **mock** - moduł odpowiadający za generowanie samolotów
+  * **panel** - moduł zawierający główną logikę programu
+  * **server** - moduł odpowiadający za sortowanie i zwracanie gotowej kolejki
+  * **utils** - moduł zawierający funkcje wypisujące na ekran instrukcje dla użytkownika.
+
+== Przebieg działania ==
+Przygotowanie symulacji odbywa się poprzez zapytanie użytkownika o liczbę samolotów. Następnie uruchamiany jest moduł mock, który generuje kolejkę samolotów: nazwy samolotów są pobierane losowo z pliku /src/mock/aircrafts.txt, tryb samolotu land/take_off jest losowo przydzielany z listy, wartości szacowanego czasu do wykorzystania pasa oraz opóźnienie są generowane losowo. W trybie [2] użytkownik ma możliwość samodzielnego wprowadzenia nazw samolotów do bazy (dopisanie do pliku).
+
+Wizualizacja symulacji odbywa się poprzez wypisywanie co sekundę na ekran kolejki do pasa startowego. Jeżeli w danym momencie kilka samolotów ma jednakowy czas równy 0, to jedynie pierwszy z nich uzyskuje dostęp do pasa, natomiast kolejne mają odpowiednio inkrementowane wartości time i delay. W ten sposób program zabezpiecza pas przed próbą użytkowania go przez dwa samoloty jednocześnie.
+
+
+===== Instrukcja obsługi =====
+
+** Uruchomienie programu: **
+
+W głównym folderze zawierającym plik Makefile:
+<code>
+$ make 
+</code>
+
+Uruchamia się menu programu. Interacja użytkownika z programem jest prowadzona poprzez wpisywanie instrukcji w konsoli i potwierdzanie klawiszem Enter.
+
+
+===== Przykłady działania programu =====
+Zatrzymanie symulacji i wyświetlenie menu:
+
+{{:dydaktyka:pwir:2018:projekty:samoloty_zatrzymanie_i_menu.png?700|}}
+
+Wizualizacja kolejki samolotów:
+
+{{:dydaktyka:pwir:2018:projekty:samoloty_symulacja.png?700|}}
+
+Wprowadzenie nowego samolotu do bazy samolotów:
+
+{{:dydaktyka:pwir:2018:projekty:samoloty_nowy_samolot.png?700|}}
+
+Wyjście z programu:
+
+{{:dydaktyka:pwir:2018:projekty:samoloty_wyjscie.png?700|}}
